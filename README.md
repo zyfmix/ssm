@@ -13,14 +13,32 @@ Alternatively, you can manually setup the developement environment.
 
 ### Install and setup diesel (optional)
 
+* Ubuntu
+
+```shell
+#sudo apt-get install libpq-dev
+sudo apt-get install libsqlite3-dev
+```
+
 ``` sh
 # Install the diesel cli, you can skip this if you already have it installed
 cargo install diesel_cli --no-default-features --features sqlite
 # Set up the Database. Make sure to have a `DATABASE_URL` in your environment
+#export DATABASE_URL=postgresql://postgresqluser:postgresqlsecret@1.zsc.iirii.com:35432/examples
+export DATABASE_URL=sqlite://ssm.db
 diesel setup
 ```
 
+```bash
+docker run -it --rm -p 8080:8080 -v /root/ssm:/data -e SQLITE_DATABASE=ssm.db ghcr.io/coleifer/sqlite-web:latest
+```
+
 ### Setup passwd file
+
+```shell
+apt install apache2-utils
+```
+
 ```sh
 htpasswd -B -c .htpasswd user
 ```

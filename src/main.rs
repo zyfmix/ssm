@@ -44,7 +44,7 @@ pub enum DbConnection {
     Postgresql(diesel::PgConnection),
     #[cfg(feature = "mysql")]
     Mysql(diesel::MysqlConnection),
-
+    // #[cfg(feature = "sqlite")]
     Sqlite(diesel::SqliteConnection),
 }
 
