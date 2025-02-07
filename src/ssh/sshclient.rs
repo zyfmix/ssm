@@ -100,9 +100,15 @@ impl russh::client::Handler for SshHandler {
         &mut self,
         server_public_key: &PublicKey,
     ) -> Result<bool, Self::Error> {
-        let fingerprint = server_public_key.fingerprint(ssh_key::HashAlg::default());
+        info!("SshHandler: check_server_key: {:?}", server_public_key.to_string());
 
-        Ok(fingerprint.to_string().eq(&self.hostkey_fingerprint))
+        let fingerprint = server_public_key.fingerprint(ssh_key::HashAlg::default());
+        info!("SshHandler: fingerprint: {:?}", fingerprint.to_string());
+
+        let result=  fingerprint.to_string().eq(&self.hostkey_fingerprint);
+        info!("SshHandler: result: {:?}", result);
+
+        Ok(result)
     }
 }
 
@@ -122,6 +128,10 @@ impl russh::client::Handler for SshFirstConnectionHandler {
         &mut self,
         server_public_key: &PublicKey,
     ) -> Result<bool, Self::Error> {
+        info!("SshFirstConnectionHandler: check_server_key: {:?}", server_public_key.to_string());
+        let fingerprint = server_public_key.fingerprint(ssh_key::HashAlg::default());
+        info!("SshFirstConnectionHandler: fingerprint: {:?}", fingerprint.to_string());
+
         Ok(match &self.state {
             FirstConnectionState::KeySender(tx) => {
                 tx.send(
@@ -320,8 +330,11 @@ impl SshClient {
     }
 
     pub async fn get_authorized_keys(self, host: Host) -> AuthorizedKeys {
+        info!("get_authorized_keys.connect host: {:?}", host);
         let handle = self.clone().connect(host.clone()).await?;
+        info!("get_authorized_keys.get_ssh_users");
         let users = self.get_ssh_users(&handle).await?;
+        info!("get_authorized_keys.users: {:?}", users);
 
         let mut user_vec = Vec::with_capacity(users.len());
 
