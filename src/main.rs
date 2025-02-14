@@ -22,7 +22,7 @@ use diesel::r2d2::Pool;
 
 use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 use russh::keys::key::PrivateKeyWithHashAlg;
-use ssh_key::PrivateKey;
+use ssh_key::{HashAlg, PrivateKey};
 use tokio_cron_scheduler::{JobBuilder, JobScheduler};
 
 mod db;
@@ -249,6 +249,7 @@ async fn main() -> Result<(), std::io::Error> {
         ssh_key::Algorithm::Rsa { hash } => hash,
         _ => None,
     };
+    let hash = Some(HashAlg::Sha512);
 
     // TODO: maybe a better error message
     let key = PrivateKeyWithHashAlg::new(Arc::new(key), hash)
